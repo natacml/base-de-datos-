@@ -1,144 +1,152 @@
-function validarFormulario() {
-    const nombre = document.getElementById('inputNombre')
-    const rut = document.getElementById('inputRut')
-    const correo = document.getElementById('inputEmail')
-    const celular = document.getElementById('inputCelular')
-    const fechaNac = document.getElementById('inputNacimiento')
-    const nacionalidad = document.getElementById('selectNacionalidad')
-    const contrasena = document.getElementById('inputContrasena')
-    const repContrasena = document.getElementById('inputRepetirContrasena')
-    const direccion = document.getElementById('inputDireccion')
-    const foto = document.getElementById('inputFoto')
-    const genero = document.querySelector('input[name="radioGenero"]:checked')
-
-    let formularioValido = true
-
-    if (!validarInput(nombre)) { formularioValido = false }
-    if (!validarRut(rut)) { formularioValido = false }
-    if (!validarEmail(correo)) { formularioValido = false }
-    if (!validarInput(celular)) { formularioValido = false }
-    if (!validarInput(fechaNac)) { formularioValido = false }
-    if (!validarInput(nacionalidad)) { formularioValido = false }
-    if (!validarContrasena(contrasena)) { formularioValido = false }
-    if (!validarConfirmarContrasena(repContrasena, contrasena)) { formularioValido = false }
-    if (!validarInput(direccion)) { formularioValido = false }
-    if (!validarInput(foto)) { formularioValido = false }
-
-    if (formularioValido == true) {
-        alert('Datos ingresados correctamente, enviando datos...')
-
-        const formulario = document.getElementById('formularioRegistro');
-        const inputsForm = new FormData(formulario);
-        const datosUsuario = Object.fromEntries(inputsForm.entries());
-
-        const enviarDatos = async () => {
-            try {
-                const respuesta = await fetch('http://localhost:3000/guardarUsuario', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(datosUsuario)
-                })
-                if(respuesta.ok){
-                    window.location.href = './datos.html';
-                }
-            } catch (error) {
-                console.log('Error al guardar los datos:', error)
-            }
-        }
-        enviarDatos();
+function validarInput(elemento) {
+    if (elemento.value.trim() === "") {
+        elemento.classList.add('alerta', 'is-invalid');
+        return false;
+    } else {
+        elemento.classList.remove('alerta', 'is-invalid');
+        elemento.classList.add('correcto', 'is-valid');
+        return true;
     }
 }
 
-function validarInput(elemento) {
-    if (elemento.value === '') {
-        elemento.classList.add('alerta', 'is-invalid')
+function validarRut(elemento) {
+    if (elemento.value.trim() === "") {
+        elemento.classList.add('alerta', 'is-invalid');
         return false;
     } else {
-        elemento.classList.remove('alerta', 'is-invalid')
-        elemento.classList.add('correcto', 'is-valid')
+        elemento.classList.remove('alerta', 'is-invalid');
+        elemento.classList.add('correcto', 'is-valid');
         return true;
     }
 }
 
 function validarEmail(elemento) {
-    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/
-    if (validarInput(elemento)) {
-        if (regexEmail.test(elemento.value)) {
-            elemento.classList.remove('alerta', 'is-invalid')
-            elemento.classList.add('correcto', 'is-valid')
-            return true;
-        } else {
-            elemento.classList.add('alerta', 'is-invalid')
-            return false;
-        }
+    if (elemento.value.trim() === "") {
+        elemento.classList.add('alerta', 'is-invalid');
+        return false;
+    } else {
+        elemento.classList.remove('alerta', 'is-invalid');
+        elemento.classList.add('correcto', 'is-valid');
+        return true;
     }
 }
 
 function validarContrasena(elemento) {
-    if (validarInput(elemento)) {
-        const regexContrasena = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/;
-        if (regexContrasena.test(elemento.value)) {
-            elemento.classList.remove('alerta', 'is-invalid')
-            elemento.classList.add('correcto', 'is-valid')
-            return true;
-        } else {
-            elemento.classList.add('alerta', 'is-invalid')
-            return false;
-        }
-    }
-}
-
-function validarRut(elemento) {
-    if (validarInput(elemento)) {
-        let rutCompleto = elemento.value
-        rutCompleto = rutCompleto.replace(/\./g, '').replace('-', '');
-        const cuerpo = rutCompleto.slice(0, -1);
-        const dv = rutCompleto.slice(-1).toUpperCase();
-
-        if (/^\d+$/.test(cuerpo)) {
-            let suma = 0;
-            let multiplo = 2;
-
-            for (let i = cuerpo.length - 1; i >= 0; i--) {
-                suma += parseInt(cuerpo.charAt(i)) * multiplo;
-                multiplo = multiplo < 7 ? multiplo + 1 : 2;
-            }
-
-            const dvEsperado = 11 - (suma % 11);
-
-            if (dvEsperado === 11) {
-                return dv === '0';
-            } else if (dvEsperado === 10) {
-                return dv === 'K';
-            }
-
-            if (dv === dvEsperado.toString()) {
-                elemento.classList.remove('alerta', 'is-invalid')
-                elemento.classList.add('correcto', 'is-valid')
-                return true;
-            } else {
-                elemento.classList.add('alerta', 'is-invalid')
-                return false;
-            }
-        } else {
-            elemento.classList.add('alerta', 'is-invalid')
-            return false;
-        }
+    if (elemento.value.trim() === "") {
+        elemento.classList.add('alerta', 'is-invalid');
+        return false;
+    } else {
+        elemento.classList.remove('alerta', 'is-invalid');
+        elemento.classList.add('correcto', 'is-valid');
+        return true;
     }
 }
 
 function validarConfirmarContrasena(elemento1, elemento2) {
     if (validarInput(elemento1)) {
         if (elemento1.value === elemento2.value) {
-            elemento1.classList.remove('alerta', 'is-invalid')
-            elemento1.classList.add('correcto', 'is-valid')
+            elemento1.classList.remove('alerta', 'is-invalid');
+            elemento1.classList.add('correcto', 'is-valid');
             return true;
         } else {
-            elemento1.classList.add('alerta', 'is-invalid')
+            elemento1.classList.add('alerta', 'is-invalid');
             return false;
         }
+    }
+}
 
+async function cargarPaises() {
+    try {
+        const respuesta = await fetch('http://localhost:3000/obtenerPaises');
+        if (respuesta.ok) {
+            const paises = await respuesta.json();
+            const select = document.getElementById('selectNacionalidad');
+            
+            paises.forEach(pais => {
+                const opcion = document.createElement('option');
+                opcion.value = pais.iso2;
+                opcion.textContent = pais.nombre;
+                select.appendChild(opcion);
+            });
+        }
+    } catch (error) {
+        console.error('Error al cargar países:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    cargarPaises();
+});
+
+async function validarFormulario() {
+    const inputNombre = document.getElementById('inputNombre');
+    const inputRut = document.getElementById('inputRut');
+    const selectNacionalidad = document.getElementById('selectNacionalidad');
+    const inputEmail = document.getElementById('inputEmail');
+    const inputCelular = document.getElementById('inputCelular');
+    const inputNacimiento = document.getElementById('inputNacimiento');
+    const selectGenero = document.getElementById('selectGenero');
+    const inputContrasena = document.getElementById('inputContrasena');
+    const inputRepetirContrasena = document.getElementById('inputRepetirContrasena');
+    
+    const inputComuna = document.getElementById('inputComuna');
+    const inputCalle = document.getElementById('inputCalle');
+    const inputNumero = document.getElementById('inputNumero');
+    const inputDepartamento = document.getElementById('inputDepartamento');
+
+    // Validaciones obligatorias de campos requeridos
+    const v1 = validarInput(inputNombre);
+    const v2 = validarRut(inputRut);
+    const v3 = validarInput(selectNacionalidad);
+    const v4 = validarEmail(inputEmail);
+    const v5 = validarInput(inputContrasena);
+    const v6 = validarConfirmarContrasena(inputRepetirContrasena, inputContrasena);
+    const v7 = validarInput(inputComuna);
+    const v8 = validarInput(inputCalle);
+    const v9 = validarInput(inputNumero);
+
+    if (v1 && v2 && v3 && v4 && v5 && v6 && v7 && v8 && v9) {
+        
+        const datosUsuario = {
+            nombre: inputNombre.value,
+            rut: inputRut.value,
+            correo: inputEmail.value,
+            telefono: inputCelular.value || null,
+            fechaNacimiento: inputNacimiento.value || null,
+            genero: selectGenero.value || null, // Captura de Género (M, F, O)
+            nacionalidad: selectNacionalidad.value,
+            direccion: {
+                comuna: inputComuna.value,
+                calle: inputCalle.value,
+                numero: Number(inputNumero.value),
+                departamento: inputDepartamento.value || undefined
+            },
+            contrasena: inputContrasena.value
+        };
+
+        try {
+            const respuesta = await fetch('http://localhost:3000/guardarUsuario', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosUsuario)
+            });
+
+            const resultado = await respuesta.json();
+
+            if (respuesta.ok) {
+                alert('¡Datos almacenados correctamente!');
+                document.getElementById('formularioRegistro').reset();
+                document.querySelectorAll('.form-control, .form-select').forEach(el => {
+                    el.classList.remove('correcto', 'is-valid');
+                });
+            } else {
+                alert('No se pudo guardar: ' + resultado.mensaje);
+            }
+        } catch (error) {
+            console.error('Error en la petición POST:', error);
+            alert('Error al conectar con el servidor.');
+        }
+    } else {
+        alert('Por favor, complete todos los campos obligatorios correctamente.');
     }
 }

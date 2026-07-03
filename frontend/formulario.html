@@ -53,11 +53,8 @@
                     </div>
                     <div class="col">
                         <label for="selectNacionalidad" class="form-label">Nacionalidad:</label>
-                        <select name="nacionalidad" id="selectNacionalidad" class="form-select">
-                            <option value="1">Chilena</option>
-                            <option value="2">Argentina</option>
-                            <option value="3">Venezolana</option>
-                            <option value="4">Peruana</option>
+                        <select name="nacionalidad" id="selectNacionalidad" class="form-select" onchange="validarInput(this)">
+                            <option value="" selected>Seleccione su país...</option>
                         </select>
                     </div>
                 </div>
@@ -70,11 +67,20 @@
                     </div>
                     <div class="col">
                         <label for="inputCelular" class="form-label">Celular Contacto:</label>
-                        <input type="tel" name="celular" id="inputCelular" class="form-control"onchange="validarInput(this)" />
+                        <input type="tel" name="celular" id="inputCelular" class="form-control" onchange="validarInput(this)" />
                     </div>
                     <div class="col">
                         <label for="inputNacimiento" class="form-label">Fecha Nacimiento:</label>
                         <input type="date" name="fechaNacimiento" id="inputNacimiento" class="form-control" onchange="validarInput(this)"/>
+                    </div>
+                    <div class="col">
+                        <label for="selectGenero" class="form-label">Género:</label>
+                        <select name="genero" id="selectGenero" class="form-select" onchange="validarInput(this)">
+                            <option value="" selected>Seleccione...</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                            <option value="O">Otro</option>
+                        </select>
                     </div>
                 </div>
                 <br />
@@ -91,12 +97,28 @@
                 </div>
                 <br />
 
-                <div class="row">
+                <div class="row p-3 mb-2 bg-light border rounded">
+                    <p class="fw-bold text-primary mb-2">Dirección de Residencia (Obligatorio)</p>
                     <div class="col">
-                        <label for="inputDireccion" class="form-label">Dirección:</label>
-                        <input type="text" name="direccion" id="inputDireccion" class="form-control" onchange="validarInput(this)"/>
+                        <label for="inputComuna" class="form-label">Comuna:</label>
+                        <input type="text" name="comuna" id="inputComuna" class="form-control" placeholder="Ej: Temuco" onchange="validarInput(this)" />
                     </div>
+                    <div class="col">
+                        <label for="inputCalle" class="form-label">Calle:</label>
+                        <input type="text" name="calle" id="inputCalle" class="form-control" placeholder="Ej: Av. Alemania" onchange="validarInput(this)" />
+                    </div>
+                    <div class="col">
+                        <label for="inputNumero" class="form-label">Número:</label>
+                        <input type="number" name="numero" id="inputNumero" class="form-control" placeholder="Ej: 1230" onchange="validarInput(this)" />
+                    </div>
+                    <div class="col">
+                        <label for="inputDepartamento" class="form-label">Depto / Oficina:</label>
+                        <input type="text" name="departamento" id="inputDepartamento" class="form-control" placeholder="Ej: 402 (Opcional)" />
+                    </div>
+                </div>
+                <br />
 
+                <div class="row">
                     <div class="col">
                         <label for="inputFoto" class="form-label">Foto Personal:</label>
                         <input type="file" name="foto" id="inputFoto" class="form-control" onchange="validarInput(this)"/>
@@ -107,7 +129,6 @@
                 <div class="row">
                     <div class="col d-flex justify-content-end">
                         <input type="reset" value="Cancelar" class="btn btn-secondary me-2" />
-                        <!-- <input type="submit" value="Enviar" class="btn btn-primary"> -->
                         <button type="button" class="btn btn-primary" onclick="validarFormulario()">
                             Enviar
                         </button>
