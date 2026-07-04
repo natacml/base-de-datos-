@@ -1,152 +1,89 @@
-function validarInput(elemento) {
-    if (elemento.value.trim() === "") {
-        elemento.classList.add('alerta', 'is-invalid');
-        return false;
-    } else {
-        elemento.classList.remove('alerta', 'is-invalid');
-        elemento.classList.add('correcto', 'is-valid');
-        return true;
-    }
-}
+window.onload = function () {
+    cargarUsuariosDesplegable();
+};
 
-function validarRut(elemento) {
-    if (elemento.value.trim() === "") {
-        elemento.classList.add('alerta', 'is-invalid');
-        return false;
-    } else {
-        elemento.classList.remove('alerta', 'is-invalid');
-        elemento.classList.add('correcto', 'is-valid');
-        return true;
-    }
-}
-
-function validarEmail(elemento) {
-    if (elemento.value.trim() === "") {
-        elemento.classList.add('alerta', 'is-invalid');
-        return false;
-    } else {
-        elemento.classList.remove('alerta', 'is-invalid');
-        elemento.classList.add('correcto', 'is-valid');
-        return true;
-    }
-}
-
-function validarContrasena(elemento) {
-    if (elemento.value.trim() === "") {
-        elemento.classList.add('alerta', 'is-invalid');
-        return false;
-    } else {
-        elemento.classList.remove('alerta', 'is-invalid');
-        elemento.classList.add('correcto', 'is-valid');
-        return true;
-    }
-}
-
-function validarConfirmarContrasena(elemento1, elemento2) {
-    if (validarInput(elemento1)) {
-        if (elemento1.value === elemento2.value) {
-            elemento1.classList.remove('alerta', 'is-invalid');
-            elemento1.classList.add('correcto', 'is-valid');
-            return true;
-        } else {
-            elemento1.classList.add('alerta', 'is-invalid');
-            return false;
-        }
-    }
-}
-
-async function cargarPaises() {
+async function cargarUsuariosDesplegable() {
     try {
-        const respuesta = await fetch('http://localhost:3000/obtenerPaises');
+        const respuesta = await fetch('http://localhost:3000/obtenerUsuarios');
+        
         if (respuesta.ok) {
-            const paises = await respuesta.json();
-            const select = document.getElementById('selectNacionalidad');
+            const usuarios = await respuesta.json();
+            const select = document.getElementById('selectUsuario');
             
-            paises.forEach(pais => {
+            select.innerHTML = '<option value="">-- Seleccione un Propietario --</option>';
+            
+            usuarios.forEach(usuario => {
                 const opcion = document.createElement('option');
-                opcion.value = pais.iso2;
-                opcion.textContent = pais.nombre;
+                opcion.value = usuario._id; 
+                opcion.textContent = `${usuario.nombre} (${usuario.rut})`;
                 select.appendChild(opcion);
             });
+        } else {
+            console.error("No se pudieron cargar los usuarios en el formulario.");
         }
     } catch (error) {
-        console.error('Error al cargar países:', error);
+        console.error("Error de red al obtener los usuarios: ", error);
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    cargarPaises();
-});
+async function guardarDispositivo() {
+    const formulario = document.getElementById('formDispositivo');
+    const usuarioId = document.getElementById('selectUsuario').value;
+    const tipo = document.getElementById('inputTipo').value;
+    const marca = document.getElementById('inputMarca').value;
+    const modelo = document.getElementById('inputModelo').value;
+    const serie = document.getElementById('inputSerie').value;
+    const fechaCompra = document.getElementById('inputFecha').value;
+    const garantiaMeses = document.getElementById('inputGarantia').value;
+    const sistemaOperativo = document.getElementById('inputSO').value;
+    const estado = document.getElementById('selectEstado').value;
+    const valor = document.getElementById('inputValor').value;
 
-async function validarFormulario() {
-    const inputNombre = document.getElementById('inputNombre');
-    const inputRut = document.getElementById('inputRut');
-    const selectNacionalidad = document.getElementById('selectNacionalidad');
-    const inputEmail = document.getElementById('inputEmail');
-    const inputCelular = document.getElementById('inputCelular');
-    const inputNacimiento = document.getElementById('inputNacimiento');
-    const selectGenero = document.getElementById('selectGenero');
-    const inputContrasena = document.getElementById('inputContrasena');
-    const inputRepetirContrasena = document.getElementById('inputRepetirContrasena');
-    
-    const inputComuna = document.getElementById('inputComuna');
-    const inputCalle = document.getElementById('inputCalle');
-    const inputNumero = document.getElementById('inputNumero');
-    const inputDepartamento = document.getElementById('inputDepartamento');
+    if (!usuarioId) {
+        alert("Por favor, seleccione un usuario propietario para este dispositivo.");
+        return;
+    }
+    if (!serie) {
+        alert("El número de serie es obligatorio.");
+        return;
+    }
 
-    // Validaciones obligatorias de campos requeridos
-    const v1 = validarInput(inputNombre);
-    const v2 = validarRut(inputRut);
-    const v3 = validarInput(selectNacionalidad);
-    const v4 = validarEmail(inputEmail);
-    const v5 = validarInput(inputContrasena);
-    const v6 = validarConfirmarContrasena(inputRepetirContrasena, inputContrasena);
-    const v7 = validarInput(inputComuna);
-    const v8 = validarInput(inputCalle);
-    const v9 = validarInput(inputNumero);
+    // Estructuramos el objeto JSON limpio para MongoDB
+    const datosDispositivo = {
+        usuarioId: usuarioId,
+        tipo: tipo,
+        marca: marca,
+        modelo: modelo,
+        serie: serie,
+        fechaCompra: fechaCompra ? new Date(fechaCompra) : null, // Mapeo correcto de fecha
+        garantiaMeses: garantiaMeses ? parseInt(garantiaMeses) : 0,
+        sistemaOperativo: sistemaOperativo,
+        estado: estado,
+        valor: valor ? parseInt(valor) : 0
+    };
 
-    if (v1 && v2 && v3 && v4 && v5 && v6 && v7 && v8 && v9) {
-        
-        const datosUsuario = {
-            nombre: inputNombre.value,
-            rut: inputRut.value,
-            correo: inputEmail.value,
-            telefono: inputCelular.value || null,
-            fechaNacimiento: inputNacimiento.value || null,
-            genero: selectGenero.value || null, // Captura de Género (M, F, O)
-            nacionalidad: selectNacionalidad.value,
-            direccion: {
-                comuna: inputComuna.value,
-                calle: inputCalle.value,
-                numero: Number(inputNumero.value),
-                departamento: inputDepartamento.value || undefined
+    try {
+        // Enviamos los datos mediante una peticion POST al servidor
+        const respuesta = await fetch('http://localhost:3000/guardarDispositivo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            contrasena: inputContrasena.value
-        };
+            body: JSON.stringify(datosDispositivo)
+        });
 
-        try {
-            const respuesta = await fetch('http://localhost:3000/guardarUsuario', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosUsuario)
-            });
+        const resultado = await respuesta.json();
 
-            const resultado = await respuesta.json();
-
-            if (respuesta.ok) {
-                alert('¡Datos almacenados correctamente!');
-                document.getElementById('formularioRegistro').reset();
-                document.querySelectorAll('.form-control, .form-select').forEach(el => {
-                    el.classList.remove('correcto', 'is-valid');
-                });
-            } else {
-                alert('No se pudo guardar: ' + resultado.mensaje);
-            }
-        } catch (error) {
-            console.error('Error en la petición POST:', error);
-            alert('Error al conectar con el servidor.');
+        if (respuesta.ok) {
+            alert("¡Dispositivo electrónico registrado correctamente en MongoDB!");
+            if (formulario) formulario.reset(); 
+            window.location.href = "./datos.html"; 
+        } else {
+            alert("Error al guardar: " + (resultado.mensaje || "Ocurrió un problema"));
         }
-    } else {
-        alert('Por favor, complete todos los campos obligatorios correctamente.');
+
+    } catch (error) {
+        console.error("Error al enviar la petición al servidor: ", error);
+        alert("No se pudo conectar con el servidor. Revisa que tu terminal backend esté corriendo.");
     }
 }
